@@ -17,6 +17,6 @@ The rules are in a file *.txt .
    After discovering the new rules, the algorithm does other queries to understand if the rules are consistent with the RDF graphs.
    If the answer is yes, the rule will be added to the output file, otherwise it will be deleted.
    
-   Input: file *.txt with the graphs to query (if any).
+   Input: file *.txt with the named graphs to query (if any).
    
    Output: file *.txt with the rules.
