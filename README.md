@@ -5,9 +5,9 @@ These new knowledge is in the form of SWRL rules.
 The genetic algorithm evolves the population containing the classes and the properties of the ontology, discovering new patterns, until the best remain.
 The rules are in a file *.txt .
 
-Input: file *.owl (ontology)
+   Input: file *.owl (ontology)
 
-Output: file *.txt (rules)
+   Output: file *.txt (rules)
    
 2) SWRLRulesFromRDF: it is an evolution of the SWRLRulesFromOntology. 
    The classes, the properties and the individuals are taken directly from the RDF graphs and not from a file *.owl.
