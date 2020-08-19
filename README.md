@@ -1,5 +1,5 @@
 # DiscoverSWRLRulesFromKB
-There are two main project:
+There are two main projects:
 1) SWRLRulesFromOntology: thanks to the use of genetic alghorithms and the OWL API, it is possible to extract information from the ontology loaded.
 These new knowledge is in the form of SWRL rules. 
 The genetic algorithm evolves the population containing the classes and the properties of the ontology, discovering new patterns, until the best remain.
