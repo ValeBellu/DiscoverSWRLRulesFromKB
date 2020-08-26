@@ -30,7 +30,7 @@ import MOutput.OutputInformation;
 
 /**
  *
- * @author Minh and Valeria Bellusci
+ * @author Duc Minh Tran and Valeria Bellusci
  */
 public class MainClass 
 {   
