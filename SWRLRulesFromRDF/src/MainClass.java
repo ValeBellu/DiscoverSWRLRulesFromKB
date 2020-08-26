@@ -100,7 +100,7 @@ public class MainClass
       //Populate the data structures about property
         try {
         
-            String sparqlEndpoint = "https://covid19.i3s.unice.fr/sparql";
+            String sparqlEndpoint = "http://covidontheweb.inria.fr/sparql";
             OutputInformation outputProp = new OutputInformation("RESULTSQueryProperty.txt");
             
           //Do the query for each graph in the array. 
