@@ -156,7 +156,7 @@ public class MainClass
     
     /**
      * @param strFileName the file in which the rules will be written.
-     * @return true if everything is okay.
+     * @return false if everything is okay.
      */
     public boolean myRun(String strFileName)
     {
@@ -253,7 +253,7 @@ public class MainClass
         
         try {
         	//Populate the data structure
-			MainClass mainClass = new MainClass();
+		MainClass mainClass = new MainClass();
         
         int i = 1;
         
