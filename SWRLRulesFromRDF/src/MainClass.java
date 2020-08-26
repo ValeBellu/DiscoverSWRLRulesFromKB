@@ -1,9 +1,18 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.jena.atlas.web.HttpException;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
 
 import MCommon.Global;
 import MCommon.MyRandom;
@@ -253,23 +262,58 @@ public class MainClass
         
         try {
         	//Populate the data structure
-		MainClass mainClass = new MainClass();
-        
-        int i = 1;
-        
-        while (i <= 2)        
-        {
-            System.out.println();
-            System.out.println("=======================================================");
-            System.out.println("BEGIN THE SAMPLE " + i);            
-            if (!mainClass.myRun(Global.OUTPUT_PATTERNS_IN_FILE + "_" + String.valueOf(i) + ".txt")) 
-            {
-                System.out.println("END THE SAMPLE " + i);
-                i++;
-            }            
-            
-            System.out.println("=======================================================");
-            System.out.println();
+        	MainClass mainClass = new MainClass();
+
+        	int i = 1;
+
+        	while (i <= 2)        
+        	{
+        		System.out.println();
+        		System.out.println("=======================================================");
+        		System.out.println("BEGIN THE SAMPLE " + i);            
+        		if (!mainClass.myRun(Global.OUTPUT_PATTERNS_IN_FILE + "_" + String.valueOf(i) + ".txt")) 
+        		{
+        			System.out.println("END THE SAMPLE " + i);
+        			System.out.println("=======================================================");
+        	    	System.out.println("BEGIN THE CHECK " + i );
+        	    	int survived=0;
+        	    	FileWriter fileWriter = new FileWriter("C:/Users/valer/Desktop/Internship/CovidRules_Consistent.txt",true);
+        			BufferedWriter writer = new BufferedWriter(fileWriter);
+        	    	try
+        	    	{
+        	    	//	OutputInformation output = new OutputInformation("C:/Users/valer/Desktop/Internship/CovidRules_Consistent.txt");
+        	    		FileReader inputFile = new FileReader("C:\\\\Users\\\\valer\\\\eclipse-workspace\\\\GeneticAltog2\\Covid19_"+i+".txt");
+        	    		BufferedReader brInputFile = new BufferedReader(inputFile);
+
+        	    		String line = "";            
+        	    		while ((line = brInputFile.readLine()) != null)
+        	    		{
+        	    			String strPattern = line.substring(line.indexOf(".") + 1, line.lastIndexOf("&") + 1).trim();
+        	    			System.out.println(strPattern);
+        	    			survived = survived + createRuleByText(strPattern);
+
+        	    		}
+        	    		writer.append("\n");
+        	    		writer.append("Rules survived: " + survived);
+        	    		
+
+        	    		brInputFile.close();  
+        	    		writer.close();
+        	    	//	output.closeFile();
+        	    	}
+        	    	catch (IOException e)
+        	    	{
+        	    		e.getStackTrace();
+        	    		System.out.println(e);
+        	    	}  
+        	    	//CheckPattern checkPattern = new CheckPattern();
+        	    	System.out.println("=======================================================");
+        	    	System.out.println();
+        			i++;
+        		}            
+
+        		System.out.println("=======================================================");
+        		System.out.println();
         }
         
         } catch (InterruptedException e) {
@@ -278,4 +322,115 @@ public class MainClass
 		}  
         System.out.println("Finish !!!");
     }
+    
+
+        /**
+	 * Read the rules from the file generated with the Genetic Algorithm and 
+	 * for each generated rule went to query the dataset with a new query to understand if the 
+	 * rule is true.
+	 * If the number of elements returned by the query is greater than 3, the rule is considered false.
+	 * Otherwise, the rule is considered true.
+	 * @param strRule is the rule to check
+	 * @return zero if there rule is not correct and one in the other case.
+	 * @throws IOException
+	 */
+    public static  int createRuleByText(String strRule) throws IOException
+	{
+		FileWriter fileWriter = new FileWriter("C:/Users/valer/Desktop/Internship/CovidRules_Consistent.txt",true);
+		BufferedWriter writer = new BufferedWriter(fileWriter);
+		int count=0;
+		//HEAD: create the string for the IRI, and the variables.
+		String strHead = strRule.substring(0, strRule.indexOf("<=")).trim();
+		String head, strVariable1, strVariable2 = null;
+		if (strHead.contains(", "))
+		{
+			head = strHead.substring(0, strHead.indexOf("(")).trim();
+			strVariable1 = strHead.substring(strHead.indexOf("(") + 1, strHead.indexOf(",")).trim();
+			strVariable2 = strHead.substring(strHead.indexOf(",") + 1, strHead.indexOf(")")).trim();
+		} else {
+			head = strHead.substring(0, strHead.indexOf("(")).trim();
+			strVariable1 = strHead.substring(strHead.indexOf("(") + 1, strHead.indexOf(")")).trim();   
+		}
+
+		//BODY: create an arraylist containing all the IRI of the body and one containing for each position
+		//the variables of the corresponding IRI
+		String strBody = strRule.substring(strRule.indexOf("<=") + 2).trim();
+		String[] body = strBody.split("&");
+		ArrayList<String> variables = new ArrayList<String>();
+		ArrayList<String> patternsBody = new ArrayList<String>();
+
+
+		for(int i=0; i<body.length; i++) {
+			String strName = body[i].substring(0, body[i].indexOf("(")).trim();
+			patternsBody.add(strName);
+			/*if (body[i].contains(",")) {
+				String var1= body[i].substring(body[i].indexOf("(") + 1, body[i].indexOf(",")).trim();
+				String var2 = body[i].substring(body[i].indexOf(",") + 1, body[i].indexOf(")")).trim();
+				String var=var1.concat(",").concat(var2);
+				variables.add(var);
+			} else {*/
+				String var = body[i].substring(body[i].indexOf("(") + 1, body[i].indexOf(")")).trim();
+				variables.add(var);
+			//}
+		}
+
+
+		String where = "WHERE { "; 
+		for(int i=0; i<patternsBody.size(); i++) {
+			System.out.println(variables.get(i));
+			if(variables.get(i).length()!=3 && variables.get(i).length()!=2) {
+				where =where.concat((variables.get(i).substring(0, variables.get(i).indexOf(",")))).concat(" ");
+				where = where.concat("<").concat(patternsBody.get(i)).concat("> ");
+				where =where.concat((variables.get(i).substring(variables.get(i).indexOf(",")+1))).concat(". ");
+			}
+			else {
+				where =where.concat(variables.get(i)).concat(" a ");
+				where = where.concat("<").concat(patternsBody.get(i)).concat("> .");
+			}
+		}
+
+		//SELECT: only the variables in the head
+		String select = "SELECT DISTINCT ";
+		if(strVariable2!=null){
+			select =select.concat(strVariable1).concat(" ");
+			select =select.concat(strVariable2).concat(" ");
+		} else
+			select =select.concat(strVariable1).concat(" ");
+
+
+		//FILTER
+		//FILTER (NOT EXISTS {?x  <http://purl.org/spar/fabio/hasPubMedId> ?y} )}
+		String filter = " FILTER (NOT EXISTS {";
+		if(strVariable2!=null){
+			filter =filter.concat(strVariable1).concat(" ");
+			filter = filter.concat("<").concat(head).concat("> " );
+			filter =filter.concat(strVariable2).concat("})}");
+		} else 
+			filter =filter.concat(strVariable1).concat(" a ").concat("<").concat(head).concat("> })}");
+
+		// OutputInformation output = new OutputInformation("Covid_Rules_consistent.txt");
+		String queryPattern = select.concat(where).concat(filter);
+		System.out.println(queryPattern);
+
+
+		Query query = QueryFactory.create(queryPattern);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService("http://covidontheweb.inria.fr/sparql", query);
+
+		try {
+			ResultSet results = qexec.execSelect();
+			ResultSetFormatter.consume(results);
+			if(results.getRowNumber()<3) {
+				writer.append(strRule);
+				writer.append("\n");
+				count++;
+			} 
+		}
+
+		finally {
+			qexec.close();
+		}
+	
+		writer.close();
+		return count;
+	}
 }
