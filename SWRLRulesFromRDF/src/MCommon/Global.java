@@ -86,7 +86,7 @@ public class Global
     /**
      * Initialize the set of all the individuals.
      */
-    public static Set<String> allIndividuals;
+    public static Set<String> allIndividuals = new LinkedHashSet<String>();
     
     /**
      * 
