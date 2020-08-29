@@ -11,7 +11,7 @@ There are two main projects:
    Output: file *.txt (rules)
    
    ### CheckConsistencyRules 
-   This is the algorithm used to check if the rules generated from the algorithm above are consistent with the ontology. It uses $10$ threads to test $10$ rules at the same          time.
+   This is the algorithm used to check if the rules generated from the algorithm above are consistent with the ontology. It uses 10 threads to test 10 rules at the same          time.
    
 * ## SWRLRulesFromRDF
    It is an evolution of the SWRLRulesFromOntology. 
