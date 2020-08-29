@@ -195,8 +195,6 @@ public class MainClass
                 population = geneticAlgorithm.generateNewGenerationByCrossover(population);
                 //OutputInformation.showPopulation(population, true);
                 population.compute();
-                OutputInformation.showTextln("Generation:\t" + i + "\t" + population.getAverageFitness() + "\t" + 
-                population.getAverageFitnessBiggerThan0() + "\t" + population.getCountPatternFitnessBiggerThan0(), false);
                 sumAverageFitness += population.getAverageFitness();
                 sumFitnessBiggerThan0 += population.getAverageFitnessBiggerThan0();
             }
@@ -214,11 +212,6 @@ public class MainClass
             dblAverageFitness = sumAverageFitness / Global.MAX_SIZE_GENERATION;
             dblAverageFitnessBiggerThan0 = sumFitnessBiggerThan0 / Global.MAX_SIZE_GENERATION;
 
-            OutputInformation.showTextln("", false);
-            OutputInformation.showTextln("Average of sum Average Fitness of Stratified Ontology: " + dblAverageFitness, false);
-            OutputInformation.showTextln("Average of sum of Average Fitness > 0 of Stratified Ontology: " + dblAverageFitnessBiggerThan0, false);
-            OutputInformation.showTextln("", false);
-
             System.out.println("END=======================================================");        
 
             int count = 0;
@@ -228,7 +221,6 @@ public class MainClass
             for(int i = 0; i < population.getListIndividuals().size(); i++)
             {   
                 if (population.getListIndividuals().get(i).getPatternComputation().getFitnessValue() > 0)                        
-                    //if (kbStratified.addPatternHorn(population.getListIndividuals().get(i)))
                     {
                         ++count;
 
@@ -252,10 +244,10 @@ public class MainClass
     }
     
     /**
-	 * The entry point of the Genetic Algorithm application.
-     * @param args 
-     * @throws Exception 
-	 */
+    * The entry point of the Genetic Algorithm application.
+    * @param args 
+    * @throws Exception 
+    */
     public static void main(String args[]) throws Exception
     {
         System.out.println("Start !!!");
@@ -306,7 +298,6 @@ public class MainClass
         	    		e.getStackTrace();
         	    		System.out.println(e);
         	    	}  
-        	    	//CheckPattern checkPattern = new CheckPattern();
         	    	System.out.println("=======================================================");
         	    	System.out.println();
         			i++;
